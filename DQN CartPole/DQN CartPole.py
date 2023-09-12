@@ -1,7 +1,9 @@
 import gym
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import layers
+from keras.optimizers import Adam
+from keras import Sequential
+from keras.layers import Input, Dense
 import random
 
 # CartPole 환경 로드
@@ -16,15 +18,15 @@ if user_input.lower() == "y":
     model = tf.keras.models.load_model("dqn_model.h5")
 else:
     # Q-Network 모델 생성
-    model = tf.keras.Sequential([
-        layers.Input(shape=(4,)),
-        layers.Dense(32, activation="relu"),
-        layers.Dense(64, activation="relu"),
-        layers.Dense(num_actions)
+    model = Sequential([
+        Input(shape=(4,)),
+        Dense(32, activation="relu"),
+        Dense(64, activation="relu"),
+        Dense(num_actions)
     ])
 
     # 최적화 알고리즘 및 손실 함수 설정
-    optimizer = tf.optimizers.Adam(learning_rate=1e-3)
+    optimizer = Adam(learning_rate=0.001)
     loss_fn = tf.losses.mean_squared_error
 
     # 모델 컴파일
@@ -41,7 +43,7 @@ else:
     replay_memory = []
 
     # DQN 학습
-    num_episodes = 100
+    num_episodes = 1000
     for episode in range(num_episodes):
         state = env.reset()
         total_reward = 0
